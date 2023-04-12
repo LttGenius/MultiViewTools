@@ -12,3 +12,7 @@ from tensor import is_fDiagonal
 from tensor import block_diagonalized
 from tensor import tSVD
 from tensor import tnn
+
+from tensor import tProduct
+from tensor import fft
+from tensor import ifft
