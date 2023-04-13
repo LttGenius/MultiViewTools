@@ -13,3 +13,6 @@ from norm import normFrobeniusmat
 from norm import normNuclearmat
 from norm import norm
 from norm import norm_compute
+from tensor import TensorNuclearNorm
+from tensor import WeightTensorNuclearNorm
+from tensor import NonconvexTensorNuclearNorm
