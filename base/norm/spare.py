@@ -7,7 +7,8 @@ class Spare21Norm(Module):
     def optimization(self,
                      arg=None):
         tmp = tensor2matrix(arg, 2)
-        nw = np.sum(tmp**2)**0.5
+        nw = np.sum(tmp**2, axis=1)**0.5
+        tt = self.variables[self.arguments[0]] / self.variables[self.arguments[1]]
         nw = (nw - self.variables[self.arguments[0]]) / nw
         nw[nw < 0] = 0
         tmp = tmp * nw
@@ -15,7 +16,8 @@ class Spare21Norm(Module):
 
     def value(self):
         tmp = tensor2matrix(self.variables[self.opt_variable], 2)
-        self.compute_value = np.sum()
+        self.compute_value = np.sum(np.sum(tmp**2, axis=0)**0.5)
+        return self.compute_value
 
 
 class Spare1Norm(Module):
@@ -24,6 +26,11 @@ class Spare1Norm(Module):
         t = np.abs(arg) - self.variables[self.arguments[0]]
         t[t < 0] = 0
         self.variables[self.opt_variable] = np.sign(arg) * t
+
+    def value(self):
+        tmp = tensor2matrix(self.variables[self.opt_variable], 2)
+        self.compute_value = np.max(np.sum(np.abs(tmp), axis=0))
+        return self.compute_value
 
 
 class SpareCauthyNorm(Module):

@@ -146,3 +146,30 @@ def tnn(ten,
     v, n, m = ten.shape
     s = tSVD(ten, compute_uv=False)
     return np.sum(s)
+
+
+class TensorArray:
+    def __init__(self,
+                 x: np.ndarray):
+        self.x = x
+        self.shape = self.x.shape
+
+    def __mul__(self,
+                other):
+        if isinstance(other, TensorArray):
+            assert len(self.shape) == len(other.shape), 'Shape Error!'
+            if len(self.shape) == 3:
+                res = np.zeros(self.shape[1], other.shape[2])
+                v = self.shape[0]
+                for i in range(v):
+                    res[i, :, :] = np.matmul(self.x[i, :, :], other[i, :, :])
+            else:
+                res = np.matmul(self.x, other.x)
+            return res
+        else:
+            return other * self.x
+
+    def __xor__(self,
+                other):
+        return tProduct(self.x, other.x)
+
