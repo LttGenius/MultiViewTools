@@ -19,6 +19,7 @@ class Algorithm:
     def __rshift__(self,
                    other):
         self.upload_conv(other)
+        return self
 
     def __lshift__(self,
                    other):
@@ -37,4 +38,7 @@ class Algorithm:
 
     def __check_convergence(self):
         pass
+
+    def get_variables(self):
+        return self.variables_pool
 

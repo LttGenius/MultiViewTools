@@ -2,8 +2,10 @@ from base.tensor import TNN
 from base import normInfmat
 from base import Admm
 from base import Spare21Norm
+from base import Convergence
 from base import Module
 from base import Connect
+from model import base_model
 import numpy as np
 
 
@@ -84,26 +86,26 @@ class m3(Module):
         self.variables[self.opt_variable] = min(self.variables[self.opt_variable] * self.variables[self.arguments[0]],
                                                 self.variables[self.arguments[1]])
 
-class tSVDMSC:
-    X = 0
-    Y = 0
-    mm = []
-    arg = {}
-    opt_method = None
 
-    def __init__(self,
-                 x: np.ndarray = None,
-                 y: np.ndarray = None,
-                 argument = None):
-        self.load(x, y)
-        if argument:
-            self.load_arg(**argument)
+class conv(Convergence):
+    def optimization(self, 
+                     arg=None):
+        var = self.variables[self.arguments[0]] - np.matmul(self.variables[self.arguments[0]], 
+                                                            self.variables[self.arguments[1]]) - \
+        self.variables[self.arguments[2]]
+        c1 = normInfmat(var)
+        var = self.variables[self.arguments[3]] - self.variables[self.arguments[1]]
+        c2 = normInfmat(var)
+        if c1 < arg and c2 < arg:
+            t1 = True
+        else:
+            t1 = False
+        return c1, c2, t1
+        
 
-    def load_arg(self,
-                 **lam):
-        self.arg = lam
 
-    def __load_mm(self):
+class tSVDMSC(base_model):
+    def load_mm(self):
         sx = self.X.shape
         V = sx[0]
         M = sx[1]
@@ -123,48 +125,46 @@ class tSVDMSC:
                      'pho_rho': 2,
                      'N': N}
         variables = dict(**variables, **self.arg)
-        mm = [
-            c1(),
-            m1('Z', 'N', 'mu', 'rho'),
-            c2(),
-            Spare21Norm('E', 'lambda', 'mu'),
-            c3(),
-            m2('Y', 'mu'),
-            c4(),
-            TNN('G', 'rho'),
-            c5(),
-            m2('W', 'rho'),
-            m3('mu', 'pho_mu', 'max_mu'),
-            m3('rho', 'pho_rho', 'max_rho')
-        ]
+        # mm = [
+        #     c1(),
+        #     m1('Z', 'N', 'mu', 'rho'),
+        #     c2(),
+        #     Spare21Norm('E', 'lambda', 'mu'),
+        #     c3(),
+        #     m2('Y', 'mu'),
+        #     c4(),
+        #     TNN('G', 'rho'),
+        #     c5(),
+        #     m2('W', 'rho'),
+        #     m3('mu', 'pho_mu', 'max_mu'),
+        #     m3('rho', 'pho_rho', 'max_rho')
+        # ]
         arguments = {'max_iter': 200,
                      'eps':1e-7}
-        def conv():
-            c1 = normInfmat(variables)
-        self.opt_method = Admm(mm=mm,
-                               convergence=conv,
-                               arguments=arguments)
+        self.opt_method = Admm( arguments=arguments )
+        self.opt_method << c1() << m1('Z', 'N', 'mu', 'rho') << c2() << Spare21Norm('E', 'lambda', 'mu') \
+                   << c3() << m2('Y', 'mu') << c4() << TNN('G', 'rho') << c5() << m2('W', 'rho') \
+                   << m3('mu', 'pho_mu', 'max_mu') << m3('rho', 'pho_rho', 'max_rho') \
+                   >> conv('X', 'Z', 'E', 'G')
+        
 
-
-    def run(self):
-
-
-    def load(self,
-             x,
-             y=None):
-        self.load_data(x)
-        if y:
-            self.load_label(y)
-
-    def load_data(self,
-                  x):
-        self.X = x
-
-    def load_label(self,
-                   y):
-        self.Y = y
-
-
+def run_tSVDMSC(x: np.ndarray,
+                y: np.ndarray = None,
+                arguments: dict = None):
+    if not arguments:
+        arguments['lambda'] = 0.5
+    model_tsvdmsc = tSVDMSC(x=x,
+                            y=y,
+                            argument=arguments)
+    var = model_tsvdmsc.run()
+    z = var['Z']
+    v = z.shape[0]
+    s = 0
+    for i in range(v):
+        tmp = z[i, :, :]
+        s = s + (np.abs(tmp) + np.abs(tmp).T) / 2
+    
+    
 
 
 

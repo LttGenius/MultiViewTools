@@ -1,5 +1,11 @@
-from base.support import Connect
+from base.support import Module
 
 
-class Convergence(Connect):
+class Convergence(Module):
+    def __init__(self, 
+                 *arg):
+        super().__init__("__CONVERGENCE__", *arg)
+
     def compute(self):
+        return self.optimization()
+    

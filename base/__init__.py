@@ -1,6 +1,7 @@
 from support import Module
 from support import Connect
 from support import Algorithm
+from support import Convergence
 from base import tensor
 from norm import norm2vec
 from norm import norm1vec

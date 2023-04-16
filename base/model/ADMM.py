@@ -24,7 +24,7 @@ class Admm(Algorithm):
             self.load_arguments(arguments=arguments)
 
     def __check_convergence(self):
-        t = self.conv.compute()
+        t = self.conv.compute(self.eps)
         self.conv_cure.append(t)
         if self.now_iter > self.max_iter:
             return True
@@ -40,6 +40,8 @@ class Admm(Algorithm):
             for m in self.mm:
                 t = m.optimization(t)
             self.now_iter += 1
+    
+
 
 
 

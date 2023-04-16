@@ -2,6 +2,8 @@ from module import Module
 from Var import Variable
 from connect import Connect
 from algorithm import Algorithm
+from convergence import Convergence
+
 from tensor import tensor2matrix
 from tensor import matrix2tensor
 from tensor import kProduct
