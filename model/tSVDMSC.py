@@ -6,6 +6,8 @@ from base import Convergence
 from base import Module
 from base import Connect
 from model import base_model
+from model import SpectralClustering
+from model import metric
 import numpy as np
 
 
@@ -163,7 +165,9 @@ def run_tSVDMSC(x: np.ndarray,
     for i in range(v):
         tmp = z[i, :, :]
         s = s + (np.abs(tmp) + np.abs(tmp).T) / 2
-    
+    pre_y = SpectralClustering(s)
+    me = metric(pre_y, y)
+    return me
     
 
 
