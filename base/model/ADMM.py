@@ -14,10 +14,11 @@ class Admm(Algorithm):
             self.eps = arguments['eps']
 
     def __init__(self,
+                 variable,
                  mm=None,
                  convergence=None,
                  arguments=None):
-        super(Admm, self).__init__(mm)
+        super(Admm, self).__init__(variable, mm)
         if convergence:
             self.upload_conv(convergence)
         if arguments:

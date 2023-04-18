@@ -127,23 +127,10 @@ class tSVDMSC(base_model):
                      'pho_rho': 2,
                      'N': N}
         variables = dict(**variables, **self.arg)
-        # mm = [
-        #     c1(),
-        #     m1('Z', 'N', 'mu', 'rho'),
-        #     c2(),
-        #     Spare21Norm('E', 'lambda', 'mu'),
-        #     c3(),
-        #     m2('Y', 'mu'),
-        #     c4(),
-        #     TNN('G', 'rho'),
-        #     c5(),
-        #     m2('W', 'rho'),
-        #     m3('mu', 'pho_mu', 'max_mu'),
-        #     m3('rho', 'pho_rho', 'max_rho')
-        # ]
         arguments = {'max_iter': 200,
-                     'eps':1e-7}
-        self.opt_method = Admm( arguments=arguments )
+                     'eps': 1e-7}
+        self.opt_method = Admm(variable=variables,
+                               arguments=arguments)
         self.opt_method << c1() << m1('Z', 'N', 'mu', 'rho') << c2() << Spare21Norm('E', 'lambda', 'mu') \
                    << c3() << m2('Y', 'mu') << c4() << TNN('G', 'rho') << c5() << m2('W', 'rho') \
                    << m3('mu', 'pho_mu', 'max_mu') << m3('rho', 'pho_rho', 'max_rho') \
@@ -151,6 +138,7 @@ class tSVDMSC(base_model):
         
 
 def run_tSVDMSC(x: np.ndarray,
+                n: int,
                 y: np.ndarray = None,
                 arguments: dict = None):
     if not arguments:
@@ -165,9 +153,9 @@ def run_tSVDMSC(x: np.ndarray,
     for i in range(v):
         tmp = z[i, :, :]
         s = s + (np.abs(tmp) + np.abs(tmp).T) / 2
-    pre_y = SpectralClustering(s)
+    pre_y = SpectralClustering(s, n)
     me = metric(pre_y, y)
-    return me
+    return pre_y, me
     
 
 

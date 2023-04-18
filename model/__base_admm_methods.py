@@ -7,7 +7,7 @@ from base import Connect
 from base import Convergence
 import numpy as np
 
-__opt_methods_dict = {"ADMM": Admm,}
+
 
 class base_model:
     X = 0
@@ -16,7 +16,7 @@ class base_model:
     arg = {}
     opt_method = None
     opt_method_name = None
-    
+    __opt_methods_dict = {"ADMM": Admm}
     def __init__(self,
                  x: np.ndarray = None,
                  y: np.ndarray = None,
@@ -49,7 +49,7 @@ class base_model:
         self.Y = y
     
     def __load_opt_method(self):
-        self.opt_method = __opt_methods_dict[self.opt_method_name]
+        self.opt_method = self.__opt_methods_dict[self.opt_method_name]
     
     def load_mm(self):
         pass
