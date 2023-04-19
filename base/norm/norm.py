@@ -58,3 +58,7 @@ class norm_compute(Module):
                   "F": normFrobeniusmat,
                   "*": normNuclearmat}
         return di[model](tar)
+
+
+def normInfTensor(ten):
+    return np.max(np.abs(ten))

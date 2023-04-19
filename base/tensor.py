@@ -13,3 +13,4 @@ from support import ifft as tensorIFFT
 from norm import TensorNuclearNorm as TNN
 from norm import WeightTensorNuclearNorm as WTNN
 from norm import NonconvexTensorNuclearNorm as NTNN
+from norm import normInfTensor

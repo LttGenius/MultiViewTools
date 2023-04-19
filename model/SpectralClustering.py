@@ -14,6 +14,21 @@ def SpectralClustering(s: np.ndarray,
     uN,sN,vN = np.linalg.svd(LapN)
     kerN = vN[:, N - n: N]
     for i in range(N):
-        kerN[i, :] = kerN[i, :] / (norm2vec(kerN[i, :]) + eps)
-    groups = kmeans(kerN, n, max_iter=max_iter, eps=eps, dist='Euclidean', rep=rep)
+        kerN[i, :] = kerN[i, :] \
+                     / (norm2vec(kerN[i, :]) + eps)
+    groups = kmeans(
+        kerN,
+        n,
+        max_iter=max_iter,
+        eps=eps,
+        dist='Euclidean',
+        rep=rep
+    )
     return groups
+
+def SpectralClusteringbyMarkovChain(
+        s: np.ndarray,
+        n: int
+):
+
+

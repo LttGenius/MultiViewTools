@@ -16,3 +16,4 @@ from norm import norm_compute
 from tensor import TensorNuclearNorm
 from tensor import WeightTensorNuclearNorm
 from tensor import NonconvexTensorNuclearNorm
+from norm import normInfTensor
